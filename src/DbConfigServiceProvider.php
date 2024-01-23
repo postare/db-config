@@ -13,9 +13,9 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class DbConfigServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'db-settings';
+    public static string $name = 'db-config';
 
-    public static string $viewNamespace = 'db-settings';
+    public static string $viewNamespace = 'db-config';
 
     public function configurePackage(Package $package): void
     {
@@ -31,7 +31,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('postare/db-settings');
+                    ->askToStarRepoOnGitHub('postare/db-config');
             });
 
         //        $configFileName = $package->shortName();
@@ -77,8 +77,8 @@ class DbConfigServiceProvider extends PackageServiceProvider
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
-                    $file->getRealPath() => base_path("stubs/db-settings/{$file->getFilename()}"),
-                ], 'db-settings-stubs');
+                    $file->getRealPath() => base_path("stubs/db-config/{$file->getFilename()}"),
+                ], 'db-config-stubs');
             }
         }
 
@@ -88,7 +88,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'postare/db-settings';
+        return 'postare/db-config';
     }
 
     //    /**
@@ -97,9 +97,9 @@ class DbConfigServiceProvider extends PackageServiceProvider
     //    protected function getAssets(): array
     //    {
     //        return [
-    //            // AlpineComponent::make('db-settings', __DIR__ . '/../resources/dist/components/db-settings.js'),
-    //            Css::make('db-settings-styles', __DIR__ . '/../resources/dist/db-settings.css'),
-    //            Js::make('db-settings-scripts', __DIR__ . '/../resources/dist/db-settings.js'),
+    //            // AlpineComponent::make('db-config', __DIR__ . '/../resources/dist/components/db-config.js'),
+    //            Css::make('db-config-styles', __DIR__ . '/../resources/dist/db-config.css'),
+    //            Js::make('db-config-scripts', __DIR__ . '/../resources/dist/db-config.js'),
     //        ];
     //    }
 
@@ -143,7 +143,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_db-settings_table',
+            'create_db_config_table',
         ];
     }
 }

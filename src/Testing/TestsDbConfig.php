@@ -1,13 +1,13 @@
 <?php
 
-namespace Postare\DbSettings\Testing;
+namespace Postare\DbConfig\Testing;
 
 use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @mixin Testable
  */
-class TestsDbSettings
+class TestsDbConfig
 {
     //
 }

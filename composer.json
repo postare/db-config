@@ -39,13 +39,13 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Postare\\DbSettings\\": "src/",
-            "Postare\\DbSettings\\Database\\Factories\\": "database/factories/"
+            "Postare\\DbConfig\\": "src/",
+            "Postare\\DbConfig\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Postare\\DbSettings\\Tests\\": "tests/"
+            "Postare\\DbConfig\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -67,7 +67,7 @@
                 "DbConfigServiceProvider"
             ],
             "aliases": {
-                "DbSettings": "Postare\\DbSettings\\Facades\\DbSettings"
+                "DbConfig": "Postare\\DbConfig\\Facades\\DbConfig"
             }
         }
     },

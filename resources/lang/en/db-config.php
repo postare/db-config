@@ -1,6 +1,6 @@
 <?php
 
-// translations for Postare/DbSettings
+// translations for Postare/DbConfig
 return [
     //
 ];

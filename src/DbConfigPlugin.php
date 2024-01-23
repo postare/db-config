@@ -9,7 +9,7 @@ class DbConfigPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'db-settings';
+        return 'db-config';
     }
 
     public function register(Panel $panel): void

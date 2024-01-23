@@ -1,6 +1,6 @@
 <?php
 
-namespace Postare\DbSettings;
+namespace Postare\DbConfig;
 
 use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;

@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
-use Postare\DbSettings\BaseSettings;
+use Postare\DbConfig\BaseSettings;
 
 class $CLASS_NAME$SettingsPage extends BaseSettings
 {
@@ -15,7 +15,7 @@ class $CLASS_NAME$SettingsPage extends BaseSettings
 
     protected ?string $subheading = '';
 
-    protected static string $view = 'filament.setting-pages.$SETTING_NAME$';
+    protected static string $view = 'filament.config-pages.$SETTING_NAME$';
 
     protected function settingName(): string
     {

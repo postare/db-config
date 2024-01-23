@@ -1,8 +1,6 @@
 <?php
 
-namespace Postare\DbSettings\Database\Factories;
-
-use Illuminate\Database\Eloquent\Factories\Factory;
+namespace Postare\DbConfig\Database\Factories;
 
 /*
 class ModelFactory extends Factory

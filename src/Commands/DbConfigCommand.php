@@ -38,7 +38,7 @@ class DbConfigCommand extends Command
 
         $contents = $this->getSourceFile();
 
-        $this->createViewFromStub('filament.setting-pages.' . str($this->argument('name'))->lower()->slug());
+        $this->createViewFromStub('filament.config-pages.' . str($this->argument('name'))->lower()->slug());
 
         if (! $this->files->exists($path)) {
             $this->files->put($path, $contents);

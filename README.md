@@ -1,9 +1,9 @@
 # This is my package db-config
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/postare/db-settings.svg?style=flat-square)](https://packagist.org/packages/postare/db-settings)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-settings/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/postare/db-settings/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-settings/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/postare/db-settings/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/postare/db-settings.svg?style=flat-square)](https://packagist.org/packages/postare/db-settings)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
@@ -39,7 +39,7 @@ Adesso dovrai modificare il file della pagina per aggiungere i campi che vuoi mo
 namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
-use Postare\DbSettings\BaseSettings;
+use Postare\DbConfig\BaseSettings;
 
 class WebsiteSettingsPage extends BaseSettings
 {
@@ -51,7 +51,7 @@ class WebsiteSettingsPage extends BaseSettings
 
     protected ?string $subheading = '';
 
-    protected static string $view = 'filament.setting-pages.website';
+    protected static string $view = 'filament.config-pages.website';
 
     protected function settingName(): string
     {
