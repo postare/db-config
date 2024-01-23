@@ -1,15 +1,15 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace Postare\DbSettings;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class SkeletonPlugin implements Plugin
+class DbSettingsPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'skeleton';
+        return 'db-settings';
     }
 
     public function register(Panel $panel): void

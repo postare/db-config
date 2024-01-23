@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Postare\DbSettings\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class DbSettingsCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'db-settings';
 
     public $description = 'My command';
 
