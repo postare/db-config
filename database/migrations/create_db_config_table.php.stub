@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('db_settings_table', function (Blueprint $table) {
+        Schema::create('db_config', function (Blueprint $table) {
             $table->id();
 
             $table->string('key')->nullable();

@@ -1,4 +1,4 @@
-# This is my package db-settings
+# This is my package db-config
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/postare/db-settings.svg?style=flat-square)](https://packagist.org/packages/postare/db-settings)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-settings/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/postare/db-settings/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -12,13 +12,13 @@ This is where your description should go. Limit it to a paragraph or two. Consid
 You can install the package via composer:
 
 ```bash
-composer require postare/db-settings
+composer require postare/db-config
 ```
 
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag="db-settings-migrations"
+php artisan vendor:publish --tag="db-config-migrations"
 php artisan migrate
 ```
 

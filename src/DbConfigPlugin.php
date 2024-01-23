@@ -1,11 +1,11 @@
 <?php
 
-namespace Postare\DbSettings;
+namespace Postare\DbConfig;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class DbSettingsPlugin implements Plugin
+class DbConfigPlugin implements Plugin
 {
     public function getId(): string
     {

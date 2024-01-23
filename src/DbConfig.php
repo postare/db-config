@@ -1,11 +1,11 @@
 <?php
 
-namespace Postare\DbSettings;
+namespace Postare\DbConfig;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class DbSettings
+class DbConfig
 {
     /**
      * Recupera un'impostazione dal database.

@@ -3,6 +3,6 @@
 if (! function_exists('setting')) {
     function setting(string $key): mixed
     {
-        return \Postare\DbSettings\DbSettings::get($key);
+        return \Postare\DbConfig\DbConfig::get($key);
     }
 }

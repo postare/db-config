@@ -1,17 +1,17 @@
 <?php
 
-namespace Postare\DbSettings;
+namespace Postare\DbConfig;
 
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
-use Postare\DbSettings\Commands\DbSettingsCommand;
-use Postare\DbSettings\Testing\TestsDbSettings;
+use Postare\DbConfig\Commands\DbConfigCommand;
+use Postare\DbConfig\Testing\TestsDbConfig;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class DbSettingsServiceProvider extends PackageServiceProvider
+class DbConfigServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'db-settings';
 
@@ -83,7 +83,7 @@ class DbSettingsServiceProvider extends PackageServiceProvider
         }
 
         // Testing
-        Testable::mixin(new TestsDbSettings());
+        Testable::mixin(new TestsDbConfig());
     }
 
     protected function getAssetPackageName(): ?string
@@ -109,7 +109,7 @@ class DbSettingsServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            DbSettingsCommand::class,
+            DbConfigCommand::class,
         ];
     }
 

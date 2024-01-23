@@ -1,12 +1,12 @@
 <?php
 
-namespace Postare\DbSettings\Commands;
+namespace Postare\DbConfig\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Pluralizer;
 
-class DbSettingsCommand extends Command
+class DbConfigCommand extends Command
 {
     public $signature = 'make:settings {name}';
 
