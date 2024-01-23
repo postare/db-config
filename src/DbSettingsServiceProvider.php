@@ -80,7 +80,7 @@ class DbSettingsServiceProvider extends PackageServiceProvider
 
         // Handle Stubs
         if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__.'/../stubs/') as $file) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/db-settings/{$file->getFilename()}"),
                 ], 'db-settings-stubs');
@@ -103,8 +103,8 @@ class DbSettingsServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('db-settings', __DIR__ . '/../resources/dist/components/db-settings.js'),
-            Css::make('db-settings-styles', __DIR__.'/../resources/dist/db-settings.css'),
-            Js::make('db-settings-scripts', __DIR__.'/../resources/dist/db-settings.js'),
+            Css::make('db-settings-styles', __DIR__ . '/../resources/dist/db-settings.css'),
+            Js::make('db-settings-scripts', __DIR__ . '/../resources/dist/db-settings.js'),
         ];
     }
 
