@@ -64,7 +64,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "DbConfigServiceProvider"
+                "Postare\\DbConfig\\DbConfigServiceProvider"
             ],
             "aliases": {
                 "DbConfig": "Postare\\DbConfig\\Facades\\DbConfig"
