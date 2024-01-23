@@ -2,11 +2,6 @@
 
 namespace Postare\DbSettings;
 
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
@@ -39,11 +34,11 @@ class DbSettingsServiceProvider extends PackageServiceProvider
                     ->askToStarRepoOnGitHub('postare/db-settings');
             });
 
-        $configFileName = $package->shortName();
-
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
-            $package->hasConfigFile();
-        }
+        //        $configFileName = $package->shortName();
+        //
+        //        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
+        //            $package->hasConfigFile();
+        //        }
 
         if (file_exists($package->basePath('/../database/migrations'))) {
             $package->hasMigrations($this->getMigrations());
@@ -53,9 +48,9 @@ class DbSettingsServiceProvider extends PackageServiceProvider
             $package->hasTranslations();
         }
 
-        if (file_exists($package->basePath('/../resources/views'))) {
-            $package->hasViews(static::$viewNamespace);
-        }
+        //        if (file_exists($package->basePath('/../resources/views'))) {
+        //            $package->hasViews(static::$viewNamespace);
+        //        }
     }
 
     public function packageRegistered(): void
@@ -64,23 +59,23 @@ class DbSettingsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        // Asset Registration
-        FilamentAsset::register(
-            $this->getAssets(),
-            $this->getAssetPackageName()
-        );
-
-        FilamentAsset::registerScriptData(
-            $this->getScriptData(),
-            $this->getAssetPackageName()
-        );
+        //        // Asset Registration
+        //        FilamentAsset::register(
+        //            $this->getAssets(),
+        //            $this->getAssetPackageName()
+        //        );
+        //
+        //        FilamentAsset::registerScriptData(
+        //            $this->getScriptData(),
+        //            $this->getAssetPackageName()
+        //        );
 
         // Icon Registration
         FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
         if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__.'/../stubs/') as $file) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/db-settings/{$file->getFilename()}"),
                 ], 'db-settings-stubs');
@@ -96,17 +91,17 @@ class DbSettingsServiceProvider extends PackageServiceProvider
         return 'postare/db-settings';
     }
 
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
-    {
-        return [
-            // AlpineComponent::make('db-settings', __DIR__ . '/../resources/dist/components/db-settings.js'),
-            Css::make('db-settings-styles', __DIR__.'/../resources/dist/db-settings.css'),
-            Js::make('db-settings-scripts', __DIR__.'/../resources/dist/db-settings.js'),
-        ];
-    }
+    //    /**
+    //     * @return array<Asset>
+    //     */
+    //    protected function getAssets(): array
+    //    {
+    //        return [
+    //            // AlpineComponent::make('db-settings', __DIR__ . '/../resources/dist/components/db-settings.js'),
+    //            Css::make('db-settings-styles', __DIR__ . '/../resources/dist/db-settings.css'),
+    //            Js::make('db-settings-scripts', __DIR__ . '/../resources/dist/db-settings.js'),
+    //        ];
+    //    }
 
     /**
      * @return array<class-string>
