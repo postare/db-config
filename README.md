@@ -7,6 +7,8 @@
 
 This Filament plugin enables you to create dynamic configuration pages for your Laravel project.
 
+![Screenshot](https://raw.githubusercontent.com/postare/db-config/main/screenshot.png)
+
 > Tested on Laravel 10.x and Filament 3.x
 
 ## Installation
