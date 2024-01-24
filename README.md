@@ -5,10 +5,16 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 
-This Filament plugin enables you to create dynamic configuration pages for your Laravel project.
+This plugin simplifies configuration management in Filament projects, enabling the easy creation and management of
+dynamic configuration pages. It offers:
+
+It includes a simple command to generate a new configuration page, and a flexible form schema to add the desired fields.
+The package handles saving data to the database and retrieving it as needed.
 
 ![Screenshot](https://raw.githubusercontent.com/postare/db-config/main/screenshot.png)
 
+This version has been tested on Laravel 10.x and Filament 3.x.
+We look forward to your feedback and suggestions for future improvements.
 > Tested on Laravel 10.x and Filament 3.x
 
 ## Installation
