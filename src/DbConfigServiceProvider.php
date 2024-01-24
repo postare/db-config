@@ -2,8 +2,8 @@
 
 namespace Postare\DbConfig;
 
-use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Blade;
 use Livewire\Features\SupportTesting\Testable;
 use Postare\DbConfig\Commands\DbConfigCommand;
 use Postare\DbConfig\Testing\TestsDbConfig;
@@ -47,10 +47,6 @@ class DbConfigServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/lang'))) {
             $package->hasTranslations();
         }
-
-        //        if (file_exists($package->basePath('/../resources/views'))) {
-        //            $package->hasViews(static::$viewNamespace);
-        //        }
     }
 
     public function packageRegistered(): void
@@ -59,20 +55,6 @@ class DbConfigServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        //        // Asset Registration
-        //        FilamentAsset::register(
-        //            $this->getAssets(),
-        //            $this->getAssetPackageName()
-        //        );
-        //
-        //        FilamentAsset::registerScriptData(
-        //            $this->getScriptData(),
-        //            $this->getAssetPackageName()
-        //        );
-
-        // Icon Registration
-        FilamentIcon::register($this->getIcons());
-
         // Handle Stubs
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
@@ -84,24 +66,17 @@ class DbConfigServiceProvider extends PackageServiceProvider
 
         // Testing
         Testable::mixin(new TestsDbConfig());
+
+        // Imposto la direttiva blade per ottenere le impostazioni
+        Blade::directive('db_config', function ($expression) {
+            return "<?php echo \Postare\DbConfig\DbConfig::get($expression); ?>";
+        });
     }
 
     protected function getAssetPackageName(): ?string
     {
         return 'postare/db-config';
     }
-
-    //    /**
-    //     * @return array<Asset>
-    //     */
-    //    protected function getAssets(): array
-    //    {
-    //        return [
-    //            // AlpineComponent::make('db-config', __DIR__ . '/../resources/dist/components/db-config.js'),
-    //            Css::make('db-config-styles', __DIR__ . '/../resources/dist/db-config.css'),
-    //            Js::make('db-config-scripts', __DIR__ . '/../resources/dist/db-config.js'),
-    //        ];
-    //    }
 
     /**
      * @return array<class-string>
@@ -111,30 +86,6 @@ class DbConfigServiceProvider extends PackageServiceProvider
         return [
             DbConfigCommand::class,
         ];
-    }
-
-    /**
-     * @return array<string>
-     */
-    protected function getIcons(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<string>
-     */
-    protected function getRoutes(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getScriptData(): array
-    {
-        return [];
     }
 
     /**

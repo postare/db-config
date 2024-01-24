@@ -13,21 +13,21 @@ class DbConfig
      * @param  string  $key  Chiave dell'impostazione, può includere la notazione "puntata" per sottoelementi.
      *                       esempio: "mortage_rate.anticipo_percentuale" $durataAnniPredefinita = \App\Helpers\SettingsHelper::get('mortage_rate.durata_anni_predefinita');
      */
-    public static function get(string $key): mixed
+    public static function get(string $key, mixed $default = null): mixed
     {
         $parts = explode('.', $key);
-        $name = array_shift($parts);
+        $key = array_shift($parts);
 
         // Utilizzo del caching per evitare chiamate al database multiple
-        $data = Cache::remember("settings.$name", 3600, function () use ($name) {
-            $setting = DB::table('settings')->where('name', $name)->first();
+        $data = Cache::remember("db-config.$key", 3600, function () use ($key) {
+            $setting = DB::table('db-config')->where('key', $key)->first();
 
-            return $setting ? json_decode($setting->preferences, true) : [];
+            return $setting ? json_decode($setting->settings, true) : [];
         });
 
         $subKey = implode('.', $parts);
 
-        return data_get($data, $subKey);
+        return data_get($data, $subKey, $default);
     }
 
     /**
@@ -48,28 +48,28 @@ class DbConfig
     {
         // Divide la chiave per determinare il nome dell'impostazione e il percorso delle sottochiavi
         $parts = explode('.', $key);
-        $name = array_shift($parts);
+        $key = array_shift($parts);
 
-        DB::transaction(function () use ($name, $parts, $value) {
+        DB::transaction(function () use ($key, $parts, $value) {
             // Tenta di ottenere l'impostazione corrente
-            $setting = DB::table('settings')->where('name', $name)->lockForUpdate()->first();
+            $setting = DB::table('db-config')->where('key', $key)->lockForUpdate()->first();
 
-            $preferences = $setting ? json_decode($setting->preferences, true) : [];
+            $settings = $setting ? json_decode($setting->settings, true) : [];
 
             // Se ci sono sotto-chiavi, aggiornale nel JSON, altrimenti aggiorna l'intero valore
             if ($parts) {
-                data_set($preferences, implode('.', $parts), $value);
+                data_set($settings, implode('.', $parts), $value);
             } else {
-                $preferences = $value;
+                $settings = $value;
             }
 
             // Se l'impostazione esiste, aggiorna, altrimenti crea una nuova riga
             if ($setting) {
-                DB::table('settings')->where('name', $name)->update(['preferences' => json_encode($preferences)]);
+                DB::table('db-config')->where('key', $key)->update(['preferences' => json_encode($settings)]);
             } else {
-                DB::table('settings')->insert([
-                    'name' => $name,
-                    'preferences' => json_encode($preferences),
+                DB::table('db-config')->insert([
+                    'key' => $key,
+                    'settings' => json_encode($settings),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -77,6 +77,6 @@ class DbConfig
         });
 
         // Invalida la cache relativa all'impostazione
-        Cache::forget("settings.$name");
+        Cache::forget("settings.$key");
     }
 }

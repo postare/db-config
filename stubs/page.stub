@@ -3,15 +3,15 @@
 namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
-use Postare\DbConfig\BaseSettings;
+use Postare\DbConfig\AbstractPageSettings;
 
-class $CLASS_NAME$SettingsPage extends BaseSettings
+class $CLASS_NAME$SettingsPage extends AbstractPageSettings
 {
     public ?array $data = [];
 
     protected static ?string $title = '$TITLE$';
 
-    protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     protected ?string $subheading = '';
 

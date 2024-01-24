@@ -39,9 +39,9 @@ Adesso dovrai modificare il file della pagina per aggiungere i campi che vuoi mo
 namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
-use Postare\DbConfig\BaseSettings;
+use Postare\DbConfig\AbstractPageSettings;
 
-class WebsiteSettingsPage extends BaseSettings
+class WebsiteSettingsPage extends AbstractPageSettings
 {
     public ?array $data = [];
 
@@ -69,6 +69,23 @@ class WebsiteSettingsPage extends BaseSettings
             ->statePath('data');
     }
 }
+
+```
+
+## Accedere alle configurazioni salvate
+
+Puoi accedere alle configurazioni in questi modi:
+
+```php
+
+// *Consigliato* metodo helper, qui puoi indicare anche un valore di default opzionale
+db_config('website.site_name', 'default value')
+
+// Direttiva blade
+@db_config('website.site_name')
+
+// Classe statica 
+\Postare\DbConfig\DbConfig::get('website.site_name', 'default value');
 
 ```
 

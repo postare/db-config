@@ -1,8 +1,8 @@
 <?php
 
-if (! function_exists('setting')) {
-    function setting(string $key): mixed
+if (! function_exists('db_config')) {
+    function db_config(string $key, mixed $default = null): mixed
     {
-        return \Postare\DbConfig\DbConfig::get($key);
+        return \Postare\DbConfig\DbConfig::get($key, $default);
     }
 }
