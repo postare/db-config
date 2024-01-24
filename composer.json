@@ -1,6 +1,6 @@
 {
     "name": "postare/db-config",
-    "description": "This is my package db-config",
+    "description": "This plugin simplifies configuration management in Filament projects, enabling the easy creation and management of dynamic configuration pages.",
     "keywords": [
         "postare",
         "laravel",
