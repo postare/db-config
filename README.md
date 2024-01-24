@@ -1,21 +1,23 @@
-# This is my package db-config
+# DB CONFIG
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This Laravel package enables you to create dynamic configuration pages for your Filament project.
+
+> Tested on Laravel 10.x and Filament 3.x
 
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
 composer require postare/db-config
 ```
 
-You can publish and run the migrations with:
+Publish and run the migrations:
 
 ```bash
 php artisan vendor:publish --tag="db-config-migrations"
@@ -24,32 +26,33 @@ php artisan migrate
 
 ## Usage
 
-Creare una pagina di configurazione usando il seguente comando seguito dal nome della pagina:
+Create a configuration page using the following command along with the name of the page:
 
 ```bash
-php artisan make:settings website 
+php artisan make:settings website
 ```
 
-Questo creerà la Pagina Filament e la vista.
-Adesso dovrai modificare il file della pagina per aggiungere i campi che vuoi mostrare nella pagina di configurazione.
+This will create a Filament Page and a corresponding view. Next, modify the page file to add the fields you wish to
+display on the configuration page.
+
+Example:
 
 ```php
-<?php
-
 namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
 use Postare\DbConfig\AbstractPageSettings;
+use Filament\Forms\Components\TextInput;
 
 class WebsiteSettingsPage extends AbstractPageSettings
 {
     public ?array $data = [];
 
-    protected static ?string $title = 'Website';
+    protected static ?string $title = 'Website Settings';
 
     protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
 
-    protected ?string $subheading = '';
+    protected ?string $subheading = 'Manage your website configurations here.';
 
     protected static string $view = 'filament.config-pages.website';
 
@@ -62,33 +65,31 @@ class WebsiteSettingsPage extends AbstractPageSettings
     {
         return $form
             ->schema([
-            // Add your fields here
-                TextInput::make('site_name')
-                    ->required(),
+                TextInput::make('site_name')->required(),
+                // Add more fields here
             ])
             ->statePath('data');
     }
 }
-
 ```
 
-## Accedere alle configurazioni salvate
+No additional steps are required. The package handles saving data to the database and retrieving it as needed.
 
-Puoi accedere alle configurazioni in questi modi:
+## Accessing Saved Configurations
+
+You can access the configurations in the following ways:
 
 ```php
-
-// *Consigliato* metodo helper, qui puoi indicare anche un valore di default opzionale
+// *Recommended* Helper method with optional default value
 db_config('website.site_name', 'default value')
 
-// Direttiva blade
+// Blade Directive
 @db_config('website.site_name')
 
-// Classe statica 
+// Static Class
 \Postare\DbConfig\DbConfig::get('website.site_name', 'default value');
-
 ```
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+This package is open-sourced software licensed under the MIT License.
