@@ -24,15 +24,14 @@ abstract class AbstractPageSettings extends Page implements HasForms
 
     public function mount(): void
     {
-        // if $this->settingName() doesn't exist in the settings table, create it
-        if (! DB::table('db-config')->where('key', $this->settingName())->exists()) {
-            DB::table('db-config')->insert([
+        if (! DB::table('db_config')->where('key', $this->settingName())->exists()) {
+            DB::table('db_config')->insert([
                 'key' => $this->settingName(),
                 'settings' => json_encode([]),
             ]);
         }
 
-        $setting = DB::table('db-config')->where('key', $this->settingName())->first()->settings;
+        $setting = DB::table('db_config')->where('key', $this->settingName())->first()->settings;
         $setting = json_decode($setting, true);
 
         $this->form->fill($setting);
@@ -44,7 +43,7 @@ abstract class AbstractPageSettings extends Page implements HasForms
         try {
             $data = $this->form->getState();
 
-            DB::table('db-config')
+            DB::table('db_config')
                 ->where('key', $this->settingName())
                 ->update([
                     'settings' => $data,
