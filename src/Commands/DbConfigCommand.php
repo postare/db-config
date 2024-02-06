@@ -8,7 +8,7 @@ use Illuminate\Support\Pluralizer;
 
 class DbConfigCommand extends Command
 {
-    public $signature = 'make:settings {name}';
+    public $signature = 'make:settings {name} {panel?}';
 
     public $description = 'Create a new settings';
 
@@ -44,9 +44,8 @@ class DbConfigCommand extends Command
             $this->files->put($path, $contents);
             $this->info("File : {$path} created");
         } else {
-            $this->info("File : {$path} already exits");
+            $this->warn("File : {$path} already exits");
         }
-
     }
 
     /**
@@ -61,6 +60,11 @@ class DbConfigCommand extends Command
 
         // Define the path to the new view file.
         $newViewPath = resource_path('views/' . str_replace('.', '/', $viewName) . '.blade.php');
+
+        if ($this->files->exists($newViewPath)) {
+            $this->warn("File : {$newViewPath} already exists");
+            return;
+        }
 
         // Read the contents of the view stub.
         $viewStubContents = file_get_contents($viewStubPath);
@@ -94,6 +98,7 @@ class DbConfigCommand extends Command
     {
         return [
             'TITLE' => $this->getSingularClassName($this->argument('name')),
+            'PANEL' => $this->argument('panel') ? ucfirst($this->argument('panel')) . '\\' : '',
             'CLASS_NAME' => $this->getSingularClassName($this->argument('name')),
             'SETTING_NAME' => str($this->argument('name'))->lower()->slug(),
         ];
@@ -123,11 +128,15 @@ class DbConfigCommand extends Command
     }
 
     /**
-     * Get the full path of generate class
+     * Get the full path of the generated class.
      */
     public function getSourceFilePath(): string
     {
-        return base_path('App\\Filament\\Pages') . '\\' . $this->getSingularClassName($this->argument('name')) . 'SettingsPage.php';
+        $panel = $this->argument('panel');
+        $panelPrefix = $panel ? ucfirst($panel) . '\\' : '';
+
+        $path = base_path('app\\Filament\\' . $panelPrefix . 'Pages') . '\\' . $this->getSingularClassName($this->argument('name')) . 'SettingsPage.php';
+        return str_replace('\\', '/', $path);
     }
 
     /**
@@ -143,6 +152,7 @@ class DbConfigCommand extends Command
      */
     protected function makeDirectory(string $path): string
     {
+
         if (! $this->files->isDirectory($path)) {
             $this->files->makeDirectory($path, 0777, true, true);
         }
