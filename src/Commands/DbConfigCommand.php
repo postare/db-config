@@ -63,6 +63,7 @@ class DbConfigCommand extends Command
 
         if ($this->files->exists($newViewPath)) {
             $this->warn("File : {$newViewPath} already exists");
+
             return;
         }
 
@@ -136,6 +137,7 @@ class DbConfigCommand extends Command
         $panelPrefix = $panel ? ucfirst($panel) . '\\' : '';
 
         $path = base_path('app\\Filament\\' . $panelPrefix . 'Pages') . '\\' . $this->getSingularClassName($this->argument('name')) . 'SettingsPage.php';
+
         return str_replace('\\', '/', $path);
     }
 
