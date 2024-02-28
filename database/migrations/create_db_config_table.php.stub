@@ -11,9 +11,13 @@ return new class extends Migration
         Schema::create('db_config', function (Blueprint $table) {
             $table->id();
 
-            $table->string('key')->nullable();
+            $table->string('group');
+
+            $table->string('key');
 
             $table->json('settings')->nullable();
+
+            $table->unique(['group', 'key']);
 
             $table->timestamps();
         });

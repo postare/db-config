@@ -7,76 +7,86 @@ use Illuminate\Support\Facades\DB;
 
 class DbConfig
 {
+
+
     /**
-     * Recupera un'impostazione dal database.
+     * Retrieve a configuration value from the database.
      *
-     * @param  string  $key  Chiave dell'impostazione, può includere la notazione "puntata" per sottoelementi.
-     *                       esempio: "mortage_rate.anticipo_percentuale" $durataAnniPredefinita = \App\Helpers\SettingsHelper::get('mortage_rate.durata_anni_predefinita');
+     * @param string $key The configuration key.
+     * @param mixed $default The default value to return if the configuration key is not found.
+     * @return mixed The configuration value.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $parts = explode('.', $key);
-        $key = array_shift($parts);
+
+        $cachename = "db-config.$key";
+
+        $keyParts = explode('.', $key);
+        $group = array_shift($keyParts); // Prende il primo elemento dell'array e lo rimuove dall'array
+        $setting = $keyParts[0] ?? null;
 
         // Utilizzo del caching per evitare chiamate al database multiple
-        $data = Cache::remember("db-config.$key", 3600, function () use ($key) {
-            $setting = DB::table('db_config')->where('key', $key)->first();
+        $data = Cache::rememberForever($cachename, function () use ($group, $setting) {
 
-            return $setting ? json_decode($setting->settings, true) : [];
+            $item = DB::table('db_config')
+            ->where('group', $group)
+            ->where('key', $setting)
+            ->first();
+
+            return [
+                $setting => json_decode($item->settings, true)
+            ];
+
         });
 
-        $subKey = implode('.', $parts);
+        $subKey = implode('.', $keyParts);
 
         return data_get($data, $subKey, $default);
+
     }
 
     /**
-     * Imposta o aggiorna il valore di un'impostazione nel database.
-     * Se l'impostazione non esiste, verrà creata.
+     * Set a configuration value in the database.
      *
-     * @param  string  $key  Chiave dell'impostazione, può includere la notazione "puntata" per sottoelementi.
-     * @param  mixed  $value  Valore da impostare per la chiave specificata.
-     */
-    /**
-     * Imposta o aggiorna il valore di un'impostazione nel database.
-     * Se l'impostazione non esiste, verrà creata.
-     *
-     * @param  string  $key  Chiave dell'impostazione, può includere la notazione "puntata" per sottoelementi.
-     * @param  mixed  $value  Valore da impostare per la chiave specificata.
+     * @param string $key The configuration key.
+     * @param mixed $value The configuration value.
+     * @return void
      */
     public static function set(string $key, mixed $value): void
     {
-        // Divide la chiave per determinare il nome dell'impostazione e il percorso delle sottochiavi
-        $parts = explode('.', $key);
-        $key = array_shift($parts);
+        $keyParts = explode('.', $key);
+        $group = array_shift($keyParts);
+        $setting = $keyParts[0] ?? null;
 
-        DB::transaction(function () use ($key, $parts, $value) {
-            // Tenta di ottenere l'impostazione corrente
-            $setting = DB::table('db_config')->where('key', $key)->lockForUpdate()->first();
+        $data = Cache::forget("db-config.$key");
 
-            $settings = $setting ? json_decode($setting->settings, true) : [];
+        DB::table('db_config')
+            ->updateOrInsert(
+                [
+                    'group' => $group,
+                    'key' => $setting,
+                ],
+                [
+                    'settings' => json_encode($value),
+                ]
+            );
+    }
 
-            // Se ci sono sotto-chiavi, aggiornale nel JSON, altrimenti aggiorna l'intero valore
-            if ($parts) {
-                data_set($settings, implode('.', $parts), $value);
-            } else {
-                $settings = $value;
-            }
+    /**
+     * Retrieves the settings for a specific group from the database.
+     *
+     * @param string $group The group name.
+     * @return array|null The settings for the group, or null if no settings are found.
+     */
+    public static function getGroup(string $group): ?array
+    {
+        $settings = [];
 
-            // Se l'impostazione esiste, aggiorna, altrimenti crea una nuova riga
-            if ($setting) {
-                DB::table('db_config')->where('key', $key)->update(['preferences' => json_encode($settings)]);
-            } else {
-                DB::table('db_config')->insert([
-                    'key' => $key,
-                    'settings' => json_encode($settings),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
+        DB::table('db_config')->where('group', $group)->get()->each(function ($setting) use (&$settings) {
+            $settings[$setting->key] = json_decode($setting->settings, true);
         });
 
-        // Invalida la cache relativa all'impostazione
-        Cache::forget("settings.$key");
+        return $settings;
     }
+
 }
