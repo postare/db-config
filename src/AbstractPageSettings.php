@@ -7,9 +7,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 abstract class AbstractPageSettings extends Page implements HasForms
 {
@@ -30,8 +27,8 @@ abstract class AbstractPageSettings extends Page implements HasForms
 
     public function save(): void
     {
-        collect($this->form->getState())->each(function ($setting,$key) {
-            DbConfig::set($this->settingName().'.'.$key, $setting);
+        collect($this->form->getState())->each(function ($setting, $key) {
+            DbConfig::set($this->settingName() . '.' . $key, $setting);
         });
 
         Notification::make()

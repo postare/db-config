@@ -4,7 +4,6 @@ namespace Postare\DbConfig\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Postare\DbConfig\DbConfig;
@@ -39,7 +38,7 @@ class DbConfigUpdate extends Command
         $this->info('Updating database table');
 
         // Check if table exists and has the field group
-        if (Schema::hasTable('db_config') && !Schema::hasColumn('db_config', 'group')) {
+        if (Schema::hasTable('db_config') && ! Schema::hasColumn('db_config', 'group')) {
             $this->info('Adding field group to db_config table');
             Schema::table('db_config', function ($table) {
                 $table->string('group')->after('id');
@@ -49,12 +48,11 @@ class DbConfigUpdate extends Command
             $this->info('table db_config already has field group');
         }
 
-
         $groups = DB::table('db_config')
             ->where('group', '')
             ->get();
 
-        if($groups->count() > 0) {
+        if ($groups->count() > 0) {
             $this->info('Updating group field in db_config table');
 
             foreach ($groups as $group) {
@@ -77,8 +75,5 @@ class DbConfigUpdate extends Command
             $this->info('No records to update');
         }
 
-
     }
-
-
 }
