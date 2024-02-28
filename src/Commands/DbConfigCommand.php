@@ -8,7 +8,7 @@ use Illuminate\Support\Pluralizer;
 
 class DbConfigCommand extends Command
 {
-    public $signature = 'make:settings {name} {panel?}';
+    public $signature = 'make:db_config {name} {panel?}';
 
     public $description = 'Create a new settings';
 

@@ -18,12 +18,11 @@ class DbConfig
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-
-        $cachename = "db-config.$key";
-
         $keyParts = explode('.', $key);
         $group = array_shift($keyParts); // Prende il primo elemento dell'array e lo rimuove dall'array
         $setting = $keyParts[0] ?? null;
+
+        $cachename = "db-config.{$group}.{$setting}";
 
         // Utilizzo del caching per evitare chiamate al database multiple
         $data = Cache::rememberForever($cachename, function () use ($group, $setting) {
@@ -58,7 +57,9 @@ class DbConfig
         $group = array_shift($keyParts);
         $setting = $keyParts[0] ?? null;
 
-        $data = Cache::forget("db-config.$key");
+        $cachename = "db-config.{$group}.{$setting}";
+
+        Cache::forget($cachename);
 
         DB::table('db_config')
             ->updateOrInsert(

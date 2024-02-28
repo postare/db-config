@@ -6,6 +6,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Features\SupportTesting\Testable;
 use Postare\DbConfig\Commands\DbConfigCommand;
+use Postare\DbConfig\Commands\DbConfigUpdate;
 use Postare\DbConfig\Testing\TestsDbConfig;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -85,6 +86,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
     {
         return [
             DbConfigCommand::class,
+            DbConfigUpdate::class,
         ];
     }
 
