@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class DbConfig
 {
-
-
     /**
      * Retrieve a configuration value from the database.
      *
-     * @param string $key The configuration key.
-     * @param mixed $default The default value to return if the configuration key is not found.
+     * @param  string  $key  The configuration key.
+     * @param  mixed  $default  The default value to return if the configuration key is not found.
      * @return mixed The configuration value.
      */
     public static function get(string $key, mixed $default = null): mixed
@@ -28,12 +26,12 @@ class DbConfig
         $data = Cache::rememberForever($cachename, function () use ($group, $setting) {
 
             $item = DB::table('db_config')
-            ->where('group', $group)
-            ->where('key', $setting)
-            ->first();
+                ->where('group', $group)
+                ->where('key', $setting)
+                ->first();
 
             return [
-                $setting => json_decode($item->settings, true)
+                $setting => json_decode($item->settings, true),
             ];
 
         });
@@ -47,9 +45,8 @@ class DbConfig
     /**
      * Set a configuration value in the database.
      *
-     * @param string $key The configuration key.
-     * @param mixed $value The configuration value.
-     * @return void
+     * @param  string  $key  The configuration key.
+     * @param  mixed  $value  The configuration value.
      */
     public static function set(string $key, mixed $value): void
     {
@@ -76,7 +73,7 @@ class DbConfig
     /**
      * Retrieves the settings for a specific group from the database.
      *
-     * @param string $group The group name.
+     * @param  string  $group  The group name.
      * @return array|null The settings for the group, or null if no settings are found.
      */
     public static function getGroup(string $group): ?array
@@ -89,5 +86,4 @@ class DbConfig
 
         return $settings;
     }
-
 }
