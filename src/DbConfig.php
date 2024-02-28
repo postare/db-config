@@ -3,12 +3,10 @@
 namespace Postare\DbConfig;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
+use Postare\DbConfig\Models\Config;
 
 class DbConfig
 {
-
-
     /**
      * Retrieve a configuration value from the database.
      *
@@ -27,14 +25,9 @@ class DbConfig
         // Utilizzo del caching per evitare chiamate al database multiple
         $data = Cache::rememberForever($cachename, function () use ($group, $setting) {
 
-            $item = DB::table('db_config')
-            ->where('group', $group)
-            ->where('key', $setting)
-            ->first();
+            $item = Config::where('group', $group)->where('key', $setting)->first();
 
-            return [
-                $setting => json_decode($item->settings, true)
-            ];
+            return [$setting => $item->settings ?? null];
 
         });
 
@@ -59,18 +52,17 @@ class DbConfig
 
         $cachename = "db-config.{$group}.{$setting}";
 
-        Cache::forget($cachename);
+        $config = Config::firstOrNew([
+            'group' => $group,
+            'key' => $setting,
+        ]);
 
-        DB::table('db_config')
-            ->updateOrInsert(
-                [
-                    'group' => $group,
-                    'key' => $setting,
-                ],
-                [
-                    'settings' => json_encode($value),
-                ]
-            );
+        $config->settings = $value;
+
+        if ($config->isDirty()) {
+            Cache::forget($cachename);
+            $config->save();
+        }
     }
 
     /**
@@ -83,8 +75,8 @@ class DbConfig
     {
         $settings = [];
 
-        DB::table('db_config')->where('group', $group)->get()->each(function ($setting) use (&$settings) {
-            $settings[$setting->key] = json_decode($setting->settings, true);
+        Config::where('group', $group)->get()->each(function ($setting) use (&$settings) {
+            $settings[$setting->key] = $setting->settings;
         });
 
         return $settings;
