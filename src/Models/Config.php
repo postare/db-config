@@ -1,9 +1,8 @@
 <?php
+
 namespace Postare\DbConfig\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-use Postare\DbConfig\Models\Config;
 
 class Config extends Model
 {
@@ -19,5 +18,3 @@ class Config extends Model
         'settings' => 'array',
     ];
 }
-
-?>
