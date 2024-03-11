@@ -3,81 +3,105 @@
 namespace Postare\DbConfig;
 
 use Illuminate\Support\Facades\Cache;
-use Postare\DbConfig\Models\Config;
+use Illuminate\Support\Facades\DB;
 
 class DbConfig
 {
     /**
      * Retrieve a configuration value from the database.
      *
-     * @param  string  $key  The configuration key.
-     * @param  mixed  $default  The default value to return if the configuration key is not found.
+     * @param string $key The configuration key.
+     * @param mixed $default The default value to return if the configuration key is not found.
      * @return mixed The configuration value.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $keyParts = explode('.', $key);
-        $group = array_shift($keyParts); // Prende il primo elemento dell'array e lo rimuove dall'array
-        $setting = $keyParts[0] ?? null;
+        [$group, $setting] = static::parseKey($key);
 
         $cachename = "db-config.{$group}.{$setting}";
 
-        // Utilizzo del caching per evitare chiamate al database multiple
-        $data = Cache::rememberForever($cachename, function () use ($group, $setting) {
+        $default = $default ?? "[{$group}.{$setting}]";
 
-            $item = Config::where('group', $group)->where('key', $setting)->first();
+        $data = Cache::rememberForever($cachename, fn () => static::fetchConfig($group, $setting));
 
-            return [$setting => $item->settings ?? null];
+        $value = data_get($data, $setting, $default);
 
-        });
-
-        $subKey = implode('.', $keyParts);
-
-        return data_get($data, $subKey, $default);
-
+        return $value ?? $default;
     }
 
     /**
      * Set a configuration value in the database.
      *
-     * @param  string  $key  The configuration key.
-     * @param  mixed  $value  The configuration value.
+     * @param string $key The configuration key.
+     * @param mixed $value The configuration value.
+     * @return void
      */
     public static function set(string $key, mixed $value): void
     {
-        $keyParts = explode('.', $key);
-        $group = array_shift($keyParts);
-        $setting = $keyParts[0] ?? null;
+        [$group, $setting] = static::parseKey($key);
 
         $cachename = "db-config.{$group}.{$setting}";
 
-        $config = Config::firstOrNew([
-            'group' => $group,
-            'key' => $setting,
-        ]);
+        Cache::forget($cachename);
 
-        $config->settings = $value;
-
-        if ($config->isDirty()) {
-            Cache::forget($cachename);
-            $config->save();
-        }
+        static::storeConfig($group, $setting, $value);
     }
 
     /**
      * Retrieves the settings for a specific group from the database.
      *
-     * @param  string  $group  The group name.
+     * @param string $group The group name.
      * @return array|null The settings for the group, or null if no settings are found.
      */
     public static function getGroup(string $group): ?array
     {
         $settings = [];
 
-        Config::where('group', $group)->get()->each(function ($setting) use (&$settings) {
-            $settings[$setting->key] = $setting->settings;
+        DB::table('db_config')->where('group', $group)->get()->each(function ($setting) use (&$settings) {
+            $settings[$setting->key] = json_decode($setting->settings, true);
         });
 
         return $settings;
+    }
+
+    /**
+     * Parses a given key and returns an array containing the group and setting.
+     *
+     * @param string $key The key to be parsed.
+     * @return array An array containing the group and setting.
+     */
+    protected static function parseKey(string $key): array
+    {
+        $keyParts = explode('.', $key);
+        $group = array_shift($keyParts);
+        $setting = $keyParts[0] ?? null;
+
+        return [$group, $setting];
+    }
+
+    protected static function fetchConfig(string $group, string $setting): array
+    {
+        $item = DB::table('db_config')
+            ->where('group', $group)
+            ->where('key', $setting)
+            ->first();
+
+        return [
+            $setting => json_decode($item->settings, true)
+        ];
+    }
+
+    protected static function storeConfig(string $group, string $setting, mixed $value): void
+    {
+        DB::table('db_config')
+            ->updateOrInsert(
+                [
+                    'group' => $group,
+                    'key' => $setting,
+                ],
+                [
+                    'settings' => json_encode($value),
+                ]
+            );
     }
 }
