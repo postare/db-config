@@ -85,7 +85,7 @@ class DbConfig
             ->where('key', $setting)
             ->first();
 
-        if (!$item) {
+        if (! $item) {
             return [];
         }
 
