@@ -85,6 +85,10 @@ class DbConfig
             ->where('key', $setting)
             ->first();
 
+        if (!$item) {
+            return [];
+        }
+
         return [
             $setting => json_decode($item->settings, true),
         ];
