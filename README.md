@@ -21,6 +21,12 @@ We look forward to your feedback and suggestions for future improvements.
 
 Install the package via Composer:
 
+Laravel 10
+```bash
+composer require postare/db-config:^2.0
+```
+
+Laravel 11
 ```bash
 composer require postare/db-config
 ```
