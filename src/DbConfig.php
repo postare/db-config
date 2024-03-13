@@ -16,7 +16,7 @@ class DbConfig
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        [$group, $setting] = static::parseKey($key);
+        [$group, $setting, $subKey] = static::parseKey($key);
 
         $cachename = "db-config.{$group}.{$setting}";
 
@@ -24,7 +24,7 @@ class DbConfig
 
         $data = Cache::rememberForever($cachename, fn () => static::fetchConfig($group, $setting));
 
-        $value = data_get($data, $setting, $default);
+        $value = data_get($data, $subKey, $default);
 
         return $value ?? $default;
     }
@@ -74,8 +74,9 @@ class DbConfig
         $keyParts = explode('.', $key);
         $group = array_shift($keyParts);
         $setting = $keyParts[0] ?? null;
+        $subKey = implode('.', $keyParts);
 
-        return [$group, $setting];
+        return [$group, $setting, $subKey];
     }
 
     protected static function fetchConfig(string $group, string $setting): array
@@ -85,7 +86,7 @@ class DbConfig
             ->where('key', $setting)
             ->first();
 
-        if (! $item) {
+        if (!$item) {
             return [];
         }
 
