@@ -43,10 +43,10 @@ php artisan migrate
 Create a configuration page using the following command along with the name of the page:
 
 ```bash
-php artisan make:settings website 
+php artisan make:db_config website 
 
 # or specify panel
-php artisan make:settings website panelname
+php artisan make:db_config website panelname
 ```
 
 This will create a Filament Page and a corresponding view. Next, modify the page file to add the fields you wish to
