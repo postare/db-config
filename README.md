@@ -21,14 +21,19 @@ We look forward to your feedback and suggestions for future improvements.
 
 Install the package via Composer:
 
-Laravel 10
+Laravel 10 - filament 3
 ```bash
 composer require postare/db-config:^2.0
 ```
 
-Laravel 11
+Laravel 11/12 - filament 3
 ```bash
-composer require postare/db-config
+composer require postare/db-config:^3.0
+```
+
+Laravel 12 - filament 4
+```bash
+composer require postare/db-config:^4.0
 ```
 
 Publish and run the migrations:
