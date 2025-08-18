@@ -14,7 +14,7 @@ abstract class AbstractPageSettings extends Page
 
     public ?array $data = [];
 
-    protected static UnitEnum|string|null $navigationGroup = 'Impostazioni';
+    protected static UnitEnum | string | null $navigationGroup = 'Impostazioni';
 
     // Metodo astratto per ottenere il nome delle impostazioni specifiche
     abstract protected function settingName(): string;
