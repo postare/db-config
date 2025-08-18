@@ -50,9 +50,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function packageRegistered(): void
-    {
-    }
+    public function packageRegistered(): void {}
 
     public function packageBooted(): void
     {
@@ -66,7 +64,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
         }
 
         // Testing
-        Testable::mixin(new TestsDbConfig());
+        Testable::mixin(new TestsDbConfig);
 
         // Imposto la direttiva blade per ottenere le impostazioni
         Blade::directive('db_config', function ($expression) {
