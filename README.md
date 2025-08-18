@@ -71,14 +71,14 @@ class WebsiteSettingsPage extends AbstractPageSettings
 
     protected ?string $subheading = 'Manage your website configurations here.';
 
-    protected static string $view = 'filament.config-pages.website';
+    protected string $view = 'filament.config-pages.website';
 
     protected function settingName(): string
     {
         return 'website';
     }
 
-    public function form(Form $form): Form
+    public function content(Schema $schema): Schema
     {
         return $form
             ->schema([
