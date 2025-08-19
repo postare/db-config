@@ -2,11 +2,11 @@
 
 namespace Postare\DbConfig;
 
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use UnitEnum;
 
 abstract class AbstractPageSettings extends Page
 {
@@ -14,9 +14,13 @@ abstract class AbstractPageSettings extends Page
 
     public ?array $data = [];
 
-    protected static UnitEnum | string | null $navigationGroup = 'Impostazioni';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    // Metodo astratto per ottenere il nome delle impostazioni specifiche
+    public static function getNavigationGroup(): ?string
+    {
+        return __('db-config::db-config.navigation_group');
+    }
+
     abstract protected function settingName(): string;
 
     public function mount(): void
@@ -28,13 +32,13 @@ abstract class AbstractPageSettings extends Page
     public function save(): void
     {
         collect($this->content->getState())->each(function ($setting, $key) {
-            DbConfig::set($this->settingName() . '.' . $key, $setting);
+            DbConfig::set($this->settingName().'.'.$key, $setting);
         });
 
         Notification::make()
             ->success()
-            ->title(__('Salvato'))
-            ->body(__('Le impostazioni sono state salvate con successo.'))
+            ->title(__('db-config::db-config.saved_title'))
+            ->body(__('db-config::db-config.saved_body'))
             ->send();
     }
 
@@ -42,7 +46,7 @@ abstract class AbstractPageSettings extends Page
     {
         return [
             Action::make('save')
-                ->label(__('Salva'))
+                ->label(__('db-config::db-config.save'))
                 ->action(fn () => $this->save()),
         ];
     }
