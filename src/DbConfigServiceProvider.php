@@ -48,6 +48,10 @@ class DbConfigServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/lang'))) {
             $package->hasTranslations();
         }
+
+        if (file_exists($package->basePath('/../resources/views'))) {
+            $package->hasViews();
+        }
     }
 
     public function packageRegistered(): void {}
@@ -66,7 +70,7 @@ class DbConfigServiceProvider extends PackageServiceProvider
         // Testing
         Testable::mixin(new TestsDbConfig);
 
-        // Imposto la direttiva blade per ottenere le impostazioni
+        // Set the Blade directive to retrieve the settings
         Blade::directive('db_config', function ($expression) {
             return "<?php echo \Postare\DbConfig\DbConfig::get($expression); ?>";
         });
