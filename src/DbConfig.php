@@ -20,8 +20,6 @@ class DbConfig
 
         $cachename = "db-config.{$group}.{$setting}";
 
-        // $default = $default ?? "[{$group}.{$setting}]";
-
         $data = Cache::rememberForever($cachename, fn () => static::fetchConfig($group, $setting));
 
         $value = data_get($data, $subKey, $default);
