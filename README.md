@@ -1,117 +1,196 @@
-# DB CONFIG
+# DB Config
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 
-This plugin simplifies configuration management in Filament projects, enabling the easy creation and management of
-dynamic configuration pages. It offers:
+DB Config is a Filament plugin that provides a simple, database-backed key/value store for application settings, along with a streamlined way to build settings pages using Filament. It exposes a clean API for reading and writing values and uses transparent caching under the hood.
 
-It includes a simple command to generate a new configuration page, and a flexible form schema to add the desired fields.
-The package handles saving data to the database and retrieving it as needed.
+It is framework-friendly, requires no custom Eloquent models in your app, and persists values as JSON in a dedicated table.
 
-![Screenshot](https://raw.githubusercontent.com/postare/db-config/main/screenshot.png)
+## Requirements
 
-This version has been tested on Laravel 10.x and Filament 3.x.
-We look forward to your feedback and suggestions for future improvements.
-> Tested on Laravel 10.x and Filament 3.x
+- PHP version supported by your Laravel installation
+- Laravel 10, 11 or 12
+- A database engine with JSON support (MySQL 5.7+, MariaDB 10.2.7+, PostgreSQL, SQLite recent versions)
+- Filament 3.x or 4.x (see Compatibility)
 
 ## Installation
 
-Install the package via Composer:
+Install the package via Composer (choose the version matching your Laravel version):
 
-Laravel 10 - filament 3
 ```bash
-composer require postare/db-config:^2.0
+composer require postare/db-config:^2.0 # Laravel 10
+composer require postare/db-config:^3.0 # Laravel 11
+composer require postare/db-config:^4.0 # Laravel 12
 ```
 
-Laravel 11/12 - filament 3
-```bash
-composer require postare/db-config:^3.0
-```
-
-Laravel 12 - filament 4
-```bash
-composer require postare/db-config:^4.0
-```
-
-Publish and run the migrations:
+Publish and run the migration:
 
 ```bash
 php artisan vendor:publish --tag="db-config-migrations"
 php artisan migrate
 ```
 
-## Usage
+This creates a `db_config` table used to store your settings.
 
-Create a configuration page using the following command along with the name of the page:
+## Compatibility
+
+- Laravel 10 + Filament 3 → `postare/db-config:^2.0`
+- Laravel 11 + Filament 3 → `postare/db-config:^3.0`
+- Laravel 12 + Filament 4 → `postare/db-config:^4.0`
+
+## How it works
+
+Settings are organized by a two-part key: `group.setting`, with optional nested sub-keys (e.g. `group.setting.nested.key`).
+
+Under the hood:
+
+- Settings are stored in a single row per `(group, key)` with the JSON payload in the `settings` column.
+- Reads are cached forever under the cache key `db-config.{group}.{setting}`.
+- Writes clear the corresponding cache entry to keep reads fresh.
+
+## Filament integration
+
+This package ships with an Artisan generator and an abstract Page class to quickly scaffold Filament settings pages.
+
+Generate a settings page (and its Blade view):
 
 ```bash
-php artisan make:db_config website 
-
-# or specify panel
-php artisan make:db_config website panelname
+php artisan make:db_config website            # default panel
+php artisan make:db_config website admin      # specific panel (e.g. Admin)
 ```
 
-This will create a Filament Page and a corresponding view. Next, modify the page file to add the fields you wish to
-display on the configuration page.
+What gets generated:
 
-Example:
+- A Page class in `app/Filament/{Panel}/Pages/*SettingsPage.php` that extends `Postare\DbConfig\AbstractPageSettings`.
+- A Blade view at `resources/views/filament/config-pages/{name}.blade.php` which renders the page content.
+
+Page lifecycle and saving:
+
+- On `mount()`, the page loads all settings for the given group (defined by `settingName()`) via `DbConfig::getGroup()` and fills the page content state.
+- A built-in header action “Save” persists the current state by calling `DbConfig::set("{group}.{key}", $value)` for each top-level key present in the page content.
+
+Defining the page content:
+
+- Implement `protected function settingName(): string` to define the group name (e.g. `website`).
+- Implement `public function content(Schema $schema): Schema` and return your content schema.
+- Set `->statePath('data')` so the page state is bound to the `$data` property and saved correctly.
+
+Example page content (Filament schema):
 
 ```php
-namespace App\Filament\Pages;
-
-use Filament\Forms\Form;
-use Postare\DbConfig\AbstractPageSettings;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema; // or import the correct Schema depending on your setup
 
-class WebsiteSettingsPage extends AbstractPageSettings
+public function content(Schema $schema): Schema
 {
-    public ?array $data = [];
-
-    protected static ?string $title = 'Website Settings';
-
-    protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
-
-    protected ?string $subheading = 'Manage your website configurations here.';
-
-    protected string $view = 'filament.config-pages.website';
-
-    protected function settingName(): string
-    {
-        return 'website';
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $form
-            ->schema([
-                TextInput::make('site_name')->required(),
-                // Add more fields here
-            ])
-            ->statePath('data');
-    }
+    return $schema
+        ->components([
+            TextInput::make('site_name')->required(),
+            // ... other inputs
+        ])
+        ->statePath('data');
 }
 ```
 
-No additional steps are required. The package handles saving data to the database and retrieving it as needed.
+## Database schema
 
-## Accessing Saved Configurations
+The `db_config` table contains:
 
-You can access the configurations in the following ways:
+- `id` (bigint, primary key)
+- `group` (string)
+- `key` (string)
+- `settings` (json, nullable)
+- `created_at`, `updated_at` (timestamps)
+
+There is a unique index on (`group`, `key`). Timestamps are present but not used by the package logic and may remain null depending on your database defaults.
+
+## API
+
+The package exposes a minimal API for interacting with settings.
+
+Read a value (helper):
 
 ```php
-// *Recommended* Helper method with optional default value
-db_config('website.site_name', 'default value')
-
-// Blade Directive
-@db_config('website.site_name')
-
-// Static Class
-\Postare\DbConfig\DbConfig::get('website.site_name', 'default value');
+db_config('website.site_name', 'Default Name');
 ```
+
+Read a value (class):
+
+```php
+\Postare\DbConfig\DbConfig::get('website.site_name', 'Default Name');
+```
+
+Write a value:
+
+```php
+\Postare\DbConfig\DbConfig::set('website.site_name', 'Acme Inc.');
+```
+
+Read an entire group as associative array:
+
+```php
+\Postare\DbConfig\DbConfig::getGroup('website');
+// => [ 'site_name' => 'Acme Inc.', 'contact' => ['email' => 'info@acme.test'] ]
+```
+
+Facade (optional):
+
+```php
+\Postare\DbConfig\Facades\DbConfig::get('website.site_name');
+```
+
+> The `db_config()` helper is auto-registered by the package and is the recommended way to read values in application code.
+
+## Keys and nested data
+
+- Keys are split by dots. The first segment is the `group`, the second is the top-level `setting`, and any remaining segments are treated as nested keys inside the stored JSON.
+- Example: `profile.preferences.theme` stores/reads from row `(group=profile, key=preferences)` and resolves the nested path `theme` inside the JSON payload.
+- Avoid using group-only keys (e.g. `profile`) — always specify at least `group.setting`.
+
+Examples:
+
+```php
+// Store a nested structure
+\Postare\DbConfig\DbConfig::set('profile.preferences', [
+    'theme' => 'dark',
+    'notifications' => ['email' => true, 'sms' => false],
+]);
+
+// Read a nested value with default
+db_config('profile.preferences.theme', 'light'); // 'dark'
+
+// Read a missing nested value
+db_config('profile.preferences.timezone', 'UTC'); // 'UTC'
+```
+
+## Caching behavior
+
+- Reads are cached forever per `(group, setting)` to minimize database traffic.
+- `DbConfig::set()` automatically clears the cache for the affected `(group, setting)` pair.
+- When debugging, you can clear the framework cache (`php artisan cache:clear`) to reset all cached values.
+
+## Return values and defaults
+
+- If a value or nested path does not exist, the provided default is returned.
+- If the stored JSON value is `null`, the default is returned.
+- `getGroup()` returns an associative array of all settings for the group, or an empty array if none exist.
+
+## Database engines
+
+This package stores settings as JSON. Ensure your chosen database supports JSON columns. For SQLite (common in tests), JSON is stored as text and works transparently for typical use cases.
+
+## Security considerations
+
+- Do not store secrets that belong in environment variables or the configuration cache (API keys, DB credentials). Use this package for runtime-editable application settings (e.g. labels, feature flags, contact info).
+- Values are not encrypted by default. If you need encryption, wrap reads/writes with your own encryption layer before passing to the API.
+
+## Versioning
+
+This package follows semantic versioning. Use a version constraint compatible with your Laravel version as shown in the installation section.
 
 ## License
 
-This package is open-sourced software licensed under the MIT License.
+The MIT License (MIT). See the LICENSE file for more details.
