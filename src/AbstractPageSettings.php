@@ -14,7 +14,7 @@ abstract class AbstractPageSettings extends Page
 
     public ?array $data = [];
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     public static function getNavigationGroup(): ?string
     {
@@ -32,7 +32,7 @@ abstract class AbstractPageSettings extends Page
     public function save(): void
     {
         collect($this->content->getState())->each(function ($setting, $key) {
-            DbConfig::set($this->settingName().'.'.$key, $setting);
+            DbConfig::set($this->settingName() . '.' . $key, $setting);
         });
 
         Notification::make()
