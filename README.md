@@ -1,8 +1,6 @@
 # DB Config
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/postare/db-config/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/postare/db-config/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/postare/db-config.svg?style=flat-square)](https://packagist.org/packages/postare/db-config)
 
 DB Config is a Filament plugin that provides a simple, database-backed key/value store for application settings, along with a streamlined way to build settings pages using Filament. It exposes a clean API for reading and writing values and uses transparent caching under the hood.
@@ -40,6 +38,40 @@ This creates a `db_config` table used to store your settings.
 - Laravel 10 + Filament 3 → `postare/db-config:^2.0`
 - Laravel 11 + Filament 3 → `postare/db-config:^3.0`
 - Laravel 12 + Filament 4 → `postare/db-config:^4.0`
+
+## Usage of the `make:db_config` command
+
+The package provides an Artisan generator that quickly creates a Filament settings page (Page class + Blade view).
+
+Command:
+
+```bash
+php artisan make:db_config {name} {panel?}
+```
+
+Parameters:
+
+- `name`: the settings group name (e.g. `website`). It is used to generate the view name and the class name (singular, capitalized).
+- `panel` (optional): the Filament panel to create the page in (e.g. `Admin`). If omitted the default panel is used.
+
+Examples:
+
+```bash
+php artisan make:db_config website
+php artisan make:db_config website admin
+```
+
+What is generated:
+
+- A Page class at `app/Filament/{Panel}/Pages/{Name}Settings.php` (the class name is the singular form of `{name}` + `Settings`, e.g. `WebsiteSettings.php`).
+- A Blade view at `resources/views/filament/config-pages/{slug-name}-settings.blade.php` (the view name is a slugified version of the `name` with a `-settings` suffix).
+
+Behavior:
+
+- The command does not overwrite existing files: if the class or the view already exist it will warn and leave the files intact.
+- Names are normalized: the class uses the singular form of the provided name, the view is slugified (spaces and special characters are converted).
+
+Note: the generated class extends `Postare\DbConfig\AbstractPageSettings` and the view is placed under `resources/views/filament/config-pages/`.
 
 ## How it works
 
